@@ -1,0 +1,178 @@
+import FontAwesome from "@react-native-vector-icons/fontawesome";
+import FontAwesome5 from "@react-native-vector-icons/fontawesome5";
+import {MaterialIcons} from "@react-native-vector-icons/material-icons"
+import {MaterialDesignIcons} from "@react-native-vector-icons/material-design-icons"
+import React from "react";
+
+
+// Gom toàn bộ icon Tab vào đây
+export const IconsMap = (props: any) => (
+  <FontAwesome name="map-marker" iconStyle="solid" {...props} />
+);
+
+export const IconsHeart = (props: any) => (
+  <FontAwesome name="heart" iconStyle="solid" {...props} />
+);
+
+export const IconsPerson = (props: any) => (
+  <FontAwesome name="user" iconStyle="solid" {...props} />
+);
+
+export const IconSearch = (props: any) => (
+  <FontAwesome name="search" iconStyle="solid" {...props} />
+);
+
+export const IconRain = (props: any) => (
+  <FontAwesome5 name="cloud-rain" iconStyle="solid" {...props} />
+);
+
+export const IconQuestion = (props: any) => (
+  <FontAwesome5 name="question-circle" iconStyle="solid" {...props} />
+);
+export const IconWarning = (props: any) => (
+  <FontAwesome name="warning" iconStyle="solid" {...props} />
+);
+
+export const IconCrosshairs = (props: any) => (
+  <FontAwesome5 name="crosshairs" iconStyle="solid" {...props} />
+);
+
+export const IconClock = (props: any) => (
+  <FontAwesome5 name="clock" iconStyle="solid" {...props} />
+);
+
+export const IconParking = (props: any) => (
+  <FontAwesome5 name="th-large" iconStyle="solid" {...props} />
+);
+
+export const IconParkingSpotType = (props: any) => (
+  <FontAwesome5 name="parking" iconStyle="solid" {...props} />
+);
+
+export const IconSideParking = (props: any) => (
+  <FontAwesome5 name="road" iconStyle="solid" {...props} />
+);
+
+export const IconCalendar = (props: any) => (
+  <FontAwesome5 name="calendar-day" iconStyle="solid" {...props} />
+);
+
+export const IconNote = (props: any) => (
+  <FontAwesome5 name="sticky-note" iconStyle="solid" {...props} />
+);
+
+export const IconLine = (props: any) => (
+  <MaterialDesignIcons name="chart-timeline-variant" iconStyle="solid" {...props} />
+);
+
+export const IconSearchLocation = (props: any) => (
+  <FontAwesome5 name="search-location" iconStyle="solid" {...props} />
+);
+
+export const IconFilter = (props: any) => (
+  <FontAwesome5 name="sliders-h" {...props} iconStyle="solid" />
+);
+
+export const IconDistance = (props: any) => (
+  <FontAwesome5 name = "map-marker-alt" iconStyle="solid" {...props}/>
+);
+
+export const IconStar = (props: any) => (
+  <FontAwesome name="star" iconStyle="solid" {...props} />
+);
+
+export const IconStarNo = (props: any) => (
+  <FontAwesome name="star-o" iconStyle="solid" {...props} />
+);
+
+export const IconStarHalf = (props: any) => (
+  <FontAwesome name="star-half-empty" iconStyle="solid" {...props} />
+);
+
+export const IconEmail = (props: any) => (
+  <FontAwesome name="envelope" iconStyle="solid" {...props} />
+);
+
+export const IconPassword = (props: any) => (
+  <FontAwesome name="lock" iconStyle="solid" {...props} />
+);
+
+export const IconDotHorizontal = (props: any) => (
+  <MaterialDesignIcons name="dots-horizontal" iconStyle="solid"  {...props} />
+);
+
+export const IconEdit = (props: any) => (
+  <MaterialIcons name="edit" iconStyle="solid" {...props} />
+);
+
+export const IconEditAccount = (props: any) => (
+  <MaterialDesignIcons name="account-edit" iconStyle="solid" {...props} />
+);
+
+export const IconDelete = (props: any) => (
+  <MaterialIcons name="delete" iconStyle="solid" {...props} />
+);
+
+export const IconNotify = (props: any) => (
+  <MaterialDesignIcons name="bell" iconStyle="solid" {...props} />
+);
+
+export const IconLanguage = (props: any) => (
+  <FontAwesome name="language" iconStyle="solid" {...props} />
+);
+
+export const IconHelp = (props: any) => (
+  <MaterialDesignIcons name="help-box" iconStyle="solid" {...props} />
+);
+
+export const IconContact = (props: any) => (
+  <MaterialDesignIcons name="contacts" iconStyle="solid" {...props} />
+);
+
+export const IconArchiveLock = (props: any) => (
+  <MaterialDesignIcons name="archive-lock" iconStyle="solid" {...props} />
+);
+
+export const IconLogout = (props: any) => (
+  <MaterialDesignIcons name="logout" iconStyle="solid" {...props} />
+);
+
+export const IconExclaimation = (props: any) => (
+  <FontAwesome5 name="exclamation-circle" iconStyle="solid" {...props} />
+);
+
+export const IconCamera = (props: any) => (
+  <MaterialDesignIcons name="camera-image" iconStyle="solid" {...props} />
+);
+
+export const IconNoFavorite = ( props: any) => (
+  <FontAwesome name="heart-o" iconStyle="solid" {...props} />
+);
+
+export const IconFavorite = ( props: any) => (
+  <FontAwesome name="heart" iconStyle="solid" {...props} />
+);
+
+export const IconCancelRouting = (props: any) => (
+  <MaterialDesignIcons name="cancel" iconStyle="solid" {...props} />
+);
+
+export const IconVolumeHigh = (props: any) => (
+  <MaterialDesignIcons name="volume-high" iconStyle="solid" {...props} />
+);
+
+export const IconMicro = (props: any) => (
+  <FontAwesome5 name="microphone" iconStyle="solid" {...props} />
+);
+
+export const IconCar = (props: any) => (
+  <FontAwesome5 name="car" iconStyle="solid" {...props} />
+);
+
+export const IconClose = (props: any) => (
+  <MaterialIcons name="close" iconStyle="solid" {...props} />
+);
+
+export const IconPredict = (props: any) => (
+  <FontAwesome5 name="hourglass-half" iconStyle="solid" {...props} />
+);

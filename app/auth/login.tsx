@@ -1,0 +1,235 @@
+import GradientButton from '@/components/GradientButton';
+import GradientText from '@/components/GradientText';
+import { IconEmail, IconPassword } from '@/components/Icons';
+import { InputRow } from '@/components/InputRow';
+import { icons } from '@/constants/icons';
+import usePost from '@/hooks/usePost';
+import { useAuth } from '@/app/context/AuthContext';
+import { fetchMe, GGLogin, login } from '@/service/api';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import {
+  ActivityIndicator,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
+import { Linking } from 'react-native';
+import ToastCustom from '@/utils/CustomToast';
+import {
+  DISABLED_OPACITY,
+  maxLengthEmail,
+  maxLengthPassword,
+  isValidPassword,
+  isValidEmail,
+} from '@/utils/ui';
+
+export default function Login() {
+  const navigation = useNavigation<any>();
+  const { login: saveAuth } = useAuth();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const { loading, execute } = usePost(login);
+
+  // Validate logic
+  const emailValid = isValidEmail(email);
+  const passwordValid = isValidPassword(password);
+
+  const isFormInvalid = !emailValid || !passwordValid;
+
+  useEffect(() => {
+    const handleDeepLink = async (event: { url: string }) => {
+      if (event.url.includes('auth/callback')) {
+        try {
+          //lấy tempToken
+          const urlObj = new URL(event.url);
+          const tempToken = urlObj.searchParams.get('tempToken');
+          if (!tempToken) {
+            throw new Error('No temp token received from Google login');
+          }
+
+          // Gọi handleGoogleCallback với tempToken
+          const result = await fetchMe(tempToken);
+          console.log('Result: ', result);
+
+          // Lưu token vào AuthContext
+          if (result?.refreshToken && result?.accessToken) {
+            await saveAuth(
+              result.user,
+              result.accessToken,
+              result.refreshToken,
+            );
+            navigation.navigate('(tabs)' as never);
+            ToastCustom.success(
+              'Đăng nhập Google thành công!',
+              'Chào mừng bạn đến với EZPark.',
+            );
+          }
+        } catch (error) {
+          console.error('Google login failed:', error);
+          ToastCustom.error('Đăng nhập Google thất bại!', 'Vui lòng thử lại.');
+        }
+      }
+    };
+
+    // Subscribe to deep links
+    const subscription = Linking.addEventListener('url', handleDeepLink);
+
+    // Check if app was opened from a deep link
+    Linking.getInitialURL().then(url => {
+      if (url && url.includes('auth/callback')) {
+        handleDeepLink({ url });
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  const handleLogin = async () => {
+    if (!emailValid) return alert('Email không hợp lệ');
+    if (!passwordValid) return alert('Mật khẩu phải >= 10 ký tự, có chữ và số');
+
+    try {
+      const res = await execute(email, password);
+
+      if (res?.user && res?.accessToken) {
+        await saveAuth(res.user, res.accessToken, res.refreshToken);
+        navigation.navigate('(tabs)' as never);
+        ToastCustom.success(
+          'Đăng nhập thành công!',
+          'Bạn đã đăng nhập vào EZPark.',
+        );
+      } else {
+        throw new Error('Dữ liệu đăng nhập không hợp lệ');
+      }
+    } catch (err) {
+      ToastCustom.error(
+        'Đăng nhập thất bại!',
+        'Vui lòng kiểm tra lại thông tin đăng nhập.',
+      );
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      className="flex-1 bg-white"
+    >
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'center',
+          padding: 24,
+        }}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Logo */}
+        <View className="items-center mb-12">
+          <Image
+            source={icons.iconApp}
+            style={{ width: 100, height: 100, marginBottom: 12 }}
+            resizeMode="contain"
+          />
+          <View
+            style={{
+              height: 70,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <GradientText />
+          </View>
+        </View>
+
+        {/* Inputs */}
+        <InputRow
+          icon={<IconEmail size={24} color="#fff" />}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          valid={emailValid}
+          errorMsg="Email không hợp lệ"
+          maxLength={maxLengthEmail}
+        />
+
+        <InputRow
+          icon={<IconPassword size={22} color="#fff" />}
+          placeholder="Mật khẩu"
+          value={password}
+          onChangeText={setPassword}
+          secure
+          show={showPassword}
+          toggle={() => setShowPassword(!showPassword)}
+          valid={passwordValid}
+          errorMsg="Mật khẩu phải ≥ 10 ký tự, có chữ và số"
+          maxLength={maxLengthPassword}
+        />
+
+        {/* Nút đăng nhập */}
+        <View className="h-[50px] mb-3 mt-5">
+          <GradientButton
+            onPress={handleLogin}
+            disabled={isFormInvalid || loading}
+            className={`py-3 px-5 rounded-lg items-center justify-center h-full ${
+              isFormInvalid ? `opacity-${DISABLED_OPACITY}` : 'opacity-100'
+            }`}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text className="text-center text-white font-semibold text-lg">
+                Đăng nhập
+              </Text>
+            )}
+          </GradientButton>
+        </View>
+
+        {/* Đăng nhập bằng Google */}
+        <Pressable
+          className="bg-gray-200 py-3 rounded-lg mb-3 h-[50px] items-center justify-center flex-row gap-2"
+          onPress={() => {
+            GGLogin();
+          }}
+        >
+          <Image source={icons.google} style={{ width: 24, height: 24 }} />
+          <Text className="text-center text-black font-medium">
+            Đăng nhập bằng Google
+          </Text>
+        </Pressable>
+
+        {/* Quên mật khẩu */}
+        <Pressable
+          onPress={() => navigation.navigate('forgot-password' as never)}
+        >
+          <Text className="text-center text-gray-500 mb-4">
+            Bạn quên mật khẩu?
+          </Text>
+        </Pressable>
+
+        {/* Divider */}
+        <View className="flex-row items-center mb-4">
+          <View className="flex-1 h-[1px] bg-gray-300" />
+          <Text className="mx-2 text-gray-400">Hoặc</Text>
+          <View className="flex-1 h-[1px] bg-gray-300" />
+        </View>
+
+        {/* Chưa có tài khoản */}
+        <View className="flex-row justify-center">
+          <Text className="text-gray-500">Bạn chưa có tài khoản? </Text>
+          <Pressable onPress={() => navigation.navigate('signup' as never)}>
+            <Text className="text-orange-500 font-semibold">Đăng ký</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}

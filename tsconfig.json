@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "jsx": "react-native",
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    "isolatedModules": true,
+    "moduleResolution": "node",
+  },
+  "include": ["**/*.ts",
+    "**/*.tsx",
+    "nativewind-env.d.ts",
+    "src/types/**/*.d.ts",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"],
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js"]
+}

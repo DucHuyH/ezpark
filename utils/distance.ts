@@ -1,0 +1,28 @@
+import { getRoutes } from "@/service/routingService";
+
+export const toRad = (value: number) => (value * Math.PI) / 180;
+
+export const calculateDistance = async (
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): Promise<number | null> => {
+  try {
+    const routes = await getRoutes(
+      [lon1, lat1],
+      [lon2, lat2]
+    );
+
+    if (routes && routes.length > 0) {
+      const mainRoute = routes[0];
+      const distanceKm = mainRoute.distance / 1000; // m -> km
+      return parseFloat(distanceKm.toFixed(2));
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Route error:", error);
+    return null;
+  }
+};
