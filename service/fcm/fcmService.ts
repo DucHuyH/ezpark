@@ -13,23 +13,32 @@ export const registerDevice = async () => {
 
     if (!enabled) {
       console.warn('Notification permission not granted');
-     console.log('Thông báo', 'Quyền thông báo chưa được cấp.');
+      console.log('Thông báo', 'Quyền thông báo chưa được cấp.');
       return false;
     }
 
-    const fcmToken = await messaging().getToken();
     const deviceId = await DeviceInfo.getUniqueId();
+    console.log('registerDevice deviceId:', deviceId);
 
-    console.log('registerDevice payload:', { device_id: deviceId, typeof: typeof deviceId, token: fcmToken });
+    const fcmToken = await messaging().getToken();
 
-    const res = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.endpoints.DEVICES_REGISTER}`, {
-      method: 'POST',
-      headers: API_CONFIG.headers, 
-      body: JSON.stringify({
-        device_id: deviceId,
-        token: fcmToken,
-      }),
+    console.log('registerDevice payload:', {
+      device_id: deviceId,
+      typeof: typeof deviceId,
+      token: fcmToken,
     });
+
+    const res = await fetch(
+      `${API_CONFIG.BASE_URL}${API_CONFIG.endpoints.DEVICES_REGISTER}`,
+      {
+        method: 'POST',
+        headers: API_CONFIG.headers,
+        body: JSON.stringify({
+          device_id: deviceId,
+          token: fcmToken,
+        }),
+      },
+    );
 
     const data = await res.json().catch(() => null);
 
@@ -49,7 +58,6 @@ export const registerDevice = async () => {
     return false;
   }
 };
-
 
 export const subscribeToRoute = async (routeId: number) => {
   try {
@@ -80,7 +88,12 @@ export const subscribeToRoute = async (routeId: number) => {
       data = text;
     }
 
-    console.log('subscribeToRoute - response status:', res.status, 'body:', data);
+    console.log(
+      'subscribeToRoute - response status:',
+      res.status,
+      'body:',
+      data,
+    );
 
     if (!res.ok) {
       return null;
@@ -97,15 +110,16 @@ export const unsubscribeFromRoute = async () => {
   try {
     const fcmToken = await getFcmToken();
     if (!fcmToken) throw new Error('No FCM token available');
-    
-    const res = await axios.delete(`${API_CONFIG.BASE_URL}/notifications/cancel/${fcmToken}`);
+
+    const res = await axios.delete(
+      `${API_CONFIG.BASE_URL}/notifications/cancel/${fcmToken}`,
+    );
     return res.status === 200;
   } catch (error) {
     console.error('Unsubscribe error:', error);
     return false;
   }
 };
-
 
 // Hủy thông báo khi người dùng tắt thông báo
 export const disableNotifications = async () => {

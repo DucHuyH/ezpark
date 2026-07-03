@@ -2,7 +2,7 @@
 // Cấu hình API chung cho toàn bộ ứng dụng
 import { API_KEY } from '@env';
 export const API_CONFIG = {
-  BASE_URL: API_KEY,
+  BASE_URL: 'https://ezpark-zzzm.onrender.com/api',
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',

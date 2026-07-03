@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useCallback, useState } from 'react';
 import {
   View,
@@ -13,32 +14,24 @@ import { IconFavorite } from '@/components/Icons';
 import Colors from '@/constants/colors';
 import { images } from '@/constants/images';
 import { getListFavoriteParkingSpots } from '@/service/api';
-import { mapEvents, EVENT_OPEN_SPOT } from '@/utils/eventEmitter';
 import { useAuth } from '../context/AuthContext';
 import NoUserLogin from '@/components/NoUserLogin';
 
 const Favourite = () => {
   const navigation = useNavigation<any>();
   const { user } = useAuth();
+
   const [favorites, setFavorites] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true); // lần đầu load
-  const [refreshing, setRefreshing] = useState(false); // khi kéo để reload
-  // Load lại khi màn hình được focus
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
   useFocusEffect(
     useCallback(() => {
-      if (user) {
-        fetchFavorites();
-      }
-    }, [user])
+      if (user) fetchFavorites();
+    }, [user]),
   );
 
-
-  // Nếu chưa đăng nhập
-  if (!user) {
-    return <NoUserLogin />;
-  }
-
-
+  if (!user) return <NoUserLogin />;
 
   const typeLabel: Record<'parking hub' | 'on street parking', string> = {
     'parking hub': 'Bãi đỗ xe tập trung',
@@ -51,80 +44,90 @@ const Favourite = () => {
       const data = await getListFavoriteParkingSpots();
       setFavorites(data);
     } catch (error) {
-      console.error('Error fetching favorites:', error);
+      console.error(error);
     } finally {
       if (showMainLoading) setLoading(false);
       setRefreshing(false);
     }
   };
 
-
-  // Khi người dùng kéo để reload
   const onRefresh = () => {
     setRefreshing(true);
     fetchFavorites(false);
   };
 
+  const renderItem = ({ item }: any) => {
+    const spotId = item.parking_spot_id ?? item.id ?? item.spot_id;
 
+    return (
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() =>
+          navigation.navigate('index', {
+            screen: 'Tabs',
+            params: {
+              screen: 'ParkingSpot',
+              params: { openSpotId: spotId },
+            },
+          })
+        }
+        className="bg-white rounded-2xl p-4 mb-4 shadow-sm border border-gray-100"
+      >
+        {/* Header */}
+        <View className="flex-row justify-between items-start">
+          <Text className="text-lg font-semibold text-gray-900 flex-1 pr-2">
+            {item.name}
+          </Text>
+
+          <View className="bg-red-50 p-2 rounded-full">
+            <IconFavorite size={16} color={Colors.heart} />
+          </View>
+        </View>
+
+        {/* Address */}
+        <Text className="text-sm text-gray-600 mt-2">📍 {item.address}</Text>
+
+        {/* Type */}
+        <View className="mt-2 self-start bg-gray-100 px-3 py-1 rounded-full">
+          <Text className="text-xs text-gray-600">
+            {typeLabel[item.type as keyof typeof typeLabel] ?? 'Không xác định'}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-4">
-      <Text className="text-2xl font-bold text-gray-900 mt-4 mb-4 items-center">
-        Danh sách yêu thích
+    <SafeAreaView className="flex-1 bg-gray-50 px-4">
+      {/* Title */}
+      <Text className="text-2xl font-bold text-gray-900 mt-4 mb-4">
+        ❤️ Yêu thích
       </Text>
 
       {loading ? (
-        //Loading lần đầu mở trang
-        <View className="flex-1 justify-center items-center mt-10">
+        <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color={Colors.primary} />
         </View>
       ) : (
         <FlatList
           data={favorites}
           keyExtractor={item => item.favorite_id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              className="py-4 border-b border-gray-200"
-              onPress={() => {
-                const spotId = item.parking_spot_id ?? item.id ?? item.spot_id;
-                // Navigate đến index tab và truyền params cho nested screen
-                navigation.navigate('index', {
-                  screen: 'Tabs',
-                  params: {
-                    screen: 'ParkingSpot',
-                    params: { openSpotId: spotId },
-                  },
-                });
-              }}
-            >
-              <View>
-                <View className="flex-row justify-between">
-                  <Text className="text-lg font-bold text-gray-900 flex-1">
-                    {item.name}
-                  </Text>
-                  <IconFavorite size={18} color={Colors.heart} />
-                </View>
-                <Text className="text-sm text-gray-600 mt-1">
-                  {item.address}
-                </Text>
-                <Text className="text-sm text-gray-500 mt-1 italic">
-                  {typeLabel[item.type as keyof typeof typeLabel] ??
-                    'Không xác định'}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
-          //Loading xoay khi kéo để reload
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
           refreshing={refreshing}
           onRefresh={onRefresh}
+          contentContainerStyle={{
+            paddingBottom: 20,
+            flexGrow: favorites.length === 0 ? 1 : 0,
+          }}
           ListEmptyComponent={
-            <View className="flex-1 justify-center items-center mt-20">
+            <View className="flex-1 justify-center items-center">
               <Image
                 source={images.noData}
-                style={{ width: 150, height: 150, resizeMode: 'contain' }}
+                style={{ width: 160, height: 160 }}
               />
-              <Text className="mt-3 text-lg text-gray-500 text-center">
-                Chưa có bãi đỗ yêu thích nào
+              <Text className="mt-4 text-base text-gray-500">
+                Chưa có bãi đỗ yêu thích
               </Text>
             </View>
           }

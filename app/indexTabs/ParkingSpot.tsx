@@ -43,7 +43,11 @@ import ParkingSpotDetailModal from '../../modals/ParkingSpotModal';
 import ConfirmParkingRoutesModal from '../../modals/ConfirmParkingRoutes';
 // Custom hooks
 import { useScheduleTimeTriggers } from '@/hooks/useScheduleTimeTriggers';
-import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import useFetch from '../../hooks/useFetch';
 import { useSmartMapboxLocation } from '@/hooks/usePeriodicMapboxLocation';
 import { useConfirmedParkingContext } from '@/app/context/ConfirmedParkingContext';
@@ -371,10 +375,7 @@ const ParkingSpotContent = () => {
       setSelectedId(openSpotId);
       setShowParkingDetail(true);
 
-      fetchParkingSpotDetailWithStats(
-        openSpotId,
-        userLocation ?? undefined,
-      );
+      fetchParkingSpotDetailWithStats(openSpotId, userLocation ?? undefined);
 
       navigation.setParams({ openSpotId: undefined });
     }, [openSpotId, userLocation]),
@@ -393,11 +394,9 @@ const ParkingSpotContent = () => {
     });
   }, [parkingSpotDetail]);
 
-
   // Fetch no-parking routes
   const { data: noParkingRoutes } =
     useFetch<NoParkingRoute[]>(fetchNoParkingRoutes);
-
 
   // khi component mount chúng ta re-hydrate selectedRoute để modal/ banner còn hiện
   useEffect(() => {
@@ -424,9 +423,8 @@ const ParkingSpotContent = () => {
       setShowRouteParking(false);
     }
   }, [confirmed]);
-  console.log("ShowRouteParking:", showRouteParking);
-  console.log("Confirmed: ", confirmed);
-
+  console.log('ShowRouteParking:', showRouteParking);
+  console.log('Confirmed: ', confirmed);
 
   // Trigger time updates
   const [, forceUpdate] = useState(0);
@@ -617,13 +615,13 @@ const ParkingSpotContent = () => {
 
   // Hàm xác định bên cấm dựa vào ngày hôm nay cho "alternate days"
   const getEffectiveRestrictedSide = (route: NoParkingRoute): string => {
-    const typeSide: Record<NoParkingRoute["side"], string> = {
-      "odd": "Bên lẻ",
-      "even": "Bên chẵn",
-      "both": "Cả hai bên",
+    const typeSide: Record<NoParkingRoute['side'], string> = {
+      odd: 'Bên lẻ',
+      even: 'Bên chẵn',
+      both: 'Cả hai bên',
     };
 
-    if (route.type !== "alternate days") {
+    if (route.type !== 'alternate days') {
       return typeSide[route.side];
     }
 
@@ -635,8 +633,8 @@ const ParkingSpotContent = () => {
     const isEvenDay = dayOfMonth % 2 === 0;
 
     // Nếu ngày chẵn → cấm bên chẵn; ngày lẻ → cấm bên lẻ
-    const restrictedSide = isEvenDay ? "even" : "odd";
-    return typeSide[restrictedSide as NoParkingRoute["side"]];
+    const restrictedSide = isEvenDay ? 'even' : 'odd';
+    return typeSide[restrictedSide as NoParkingRoute['side']];
   };
 
   return (
@@ -667,7 +665,10 @@ const ParkingSpotContent = () => {
             Tuyến: {currentForbiddenRoute.street}
           </Text>
           <Text style={{ color: '#fff', fontSize: 20, fontWeight: '700' }}>
-            Bên cấm: {currentForbiddenRoute ? getEffectiveRestrictedSide(currentForbiddenRoute) : ""}
+            Bên cấm:{' '}
+            {currentForbiddenRoute
+              ? getEffectiveRestrictedSide(currentForbiddenRoute)
+              : ''}
           </Text>
         </Animated.View>
       )}
@@ -850,7 +851,7 @@ const ParkingSpotContent = () => {
         {/* No Parking Routes - RENDER TRƯỚC để nằm dưới */}
         {noParkingRoutes?.map(route => {
           const now = new Date();
-          if (route.type !== "alternate days") {
+          if (route.type !== 'alternate days') {
             if (isDayRestricted(now, route.days_restricted)) {
               if (isWithinTimeRange(now, route.time_range)) return null;
             }
@@ -859,7 +860,6 @@ const ParkingSpotContent = () => {
             lon,
             lat,
           ]);
-
 
           return (
             <MapboxGL.ShapeSource
@@ -1218,7 +1218,7 @@ const ParkingSpot = () => {
       overlay="svg"
       // androidStatusBarVisible={true}
       animated={true}
-      verticalOffset={42}
+      verticalOffset={1}
       tooltipStyle={{
         borderRadius: 20,
         backgroundColor: 'white',
