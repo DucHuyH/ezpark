@@ -79,7 +79,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "ezpark.com"
+    namespace "com.ezpark"
     defaultConfig {
         applicationId "ezpark.com"
         minSdkVersion rootProject.ext.minSdkVersion

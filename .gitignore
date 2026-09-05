@@ -78,3 +78,5 @@ yarn.lock
 
 .env
 android/gradle.properties
+
+android/app/google-services.json
